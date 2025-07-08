@@ -1,6 +1,6 @@
 # System‑Message Optimizer (SMO) – Design Document
 
-_Last updated: 08 Jul 2025_
+_Last updated: 08 Jul 2025_
 
 ---
 
@@ -9,7 +9,7 @@ _Last updated: 08 Jul 2025_
 The **System‑Message Optimizer (SMO)** is a lightweight service that takes a
 user‑supplied system message, sample prompts, optional tool schemas, and an
 optional typed output schema, and produces a single optimized system message.  
-The optimized message preserves the caller’s intent while adding clear tooling
+The optimized message preserves the caller's intent while adding clear tooling
 directives, schema enforcement rules, and best‑practice guardrails.
 
 ## 2. Scope & Goals
@@ -21,8 +21,8 @@ directives, schema enforcement rules, and best‑practice guardrails.
 * **Transparency** – Copy tool and output schemas verbatim so the downstream
   model sees exactly what arguments and response structure are required.  
 * **Security** – Embed a confidentiality directive to minimize jailbreak risk.  
-* **Ease of Integration** – Provide a single Dart function (`optimizeSystem`)
-  that streams the SMO’s answer and returns the optimized message.
+* **Ease of Integration** – Provide a single Dart function (`optimizeSystemPrompt`)
+  that streams the SMO's answer as it's generated.
 
 ## 3. Inputs
 
@@ -32,16 +32,17 @@ directives, schema enforcement rules, and best‑practice guardrails.
 | `samplePrompts` | `List<String>`              | ✅                | 1–3 representative prompts (reference only).           |
 | `toolSchemas`   | `List<Map<String,dynamic>>` | ✅ (may be empty) | JSON‑schema‑like maps describing each available tool.  |
 | `outputSchema`  | `Map<String,dynamic>?`      | Optional         | JSON schema the downstream response **must** satisfy.  |
-| `model`         | `String`                    | ✅                | Model identifier for the SMO Agent (e.g. `openai:o3`). |
+| `model`         | `String`                    | ✅                | Model identifier for the SMO Agent (e.g. `openai:gpt-4o-mini`). |
 
 ## 4. Output
 
 ```
-Optimized system‑message string
+Stream<String>
 ```
 
-No additional headers or metadata are returned; the caller places this string
-directly in the downstream LLM’s system‑message slot.
+The function returns a stream of string chunks that, when concatenated, form the
+complete optimized system message. This allows callers to display progress in real-time
+or process the output incrementally.
 
 ## 5. Architecture
 
@@ -52,7 +53,7 @@ A static, multi‑rule instruction block that tells the Agent how to:
 * Preserve intent and tone  
 * Insert tool & output schemas verbatim inside fenced `json` blocks  
 * Add concrete tool‑usage guidance  
-* Require 100 % schema compliance  
+* Require 100 % schema compliance  
 * Append a confidentiality clause  
 * Emit only the final system message
 
@@ -73,17 +74,17 @@ SAMPLE_PROMPTS:
 
 The prompt ends with a request for the optimized system message.
 
-### 5.3 Dart Helper – `optimizeSystem`
+### 5.3 Dart Helper – `optimizeSystemPrompt`
 
 ```dart
-Future<OptimizedConfig> optimizeSystem({ ... });
+Stream<String> optimizeSystemPrompt({ ... });
 ```
 
 1. Constructs an `Agent` with:  
-   * `system` → static SMO System Message  
-   * `prompt` → built prompt from inputs  
-2. Streams tokens via `runStream`, concatenates into a string.  
-3. Returns `OptimizedConfig(optimizedSystem)`.
+   * `system` → static SMO System Message  
+   * `prompt` → built prompt from inputs  
+2. Returns a stream that yields tokens via `runStream`.  
+3. Callers can consume the stream to get the complete optimized system message.
 
 ### 5.4 Streaming
 
@@ -96,7 +97,7 @@ At present, the helper:
 
 * Assumes tool and output schemas are syntactically valid JSON‑serializable
   maps.  
-* Does not retry or self‑validate the SMO’s output; schema validation is
+* Does not retry or self‑validate the SMO's output; schema validation is
   expected in downstream code if needed.  
 * Propagates any SDK/network exceptions to the caller.
 
@@ -108,18 +109,25 @@ Future versions may:
 ## 7. Usage Example
 
 ```dart
-final result = await optimizeSystem(
+import 'dart:io';
+
+final buffer = StringBuffer();
+
+await for (final chunk in optimizeSystemPrompt(
   baseSystem: 'You are a helpful travel agent.',
   samplePrompts: ['Find me a 3‑day itinerary in Kyoto'],
   toolSchemas: [flightToolSchema, hotelToolSchema],
   outputSchema: itinerarySchema,
-  model: 'openai:o3',
-);
+  model: 'openai:gpt-4o-mini',
+)) {
+  stdout.write(chunk); // Display progress
+  buffer.write(chunk); // Collect full message
+}
 
-print(result.optimizedSystem);
+final optimizedSystem = buffer.toString();
 ```
 
-The printed string is ready to drop into another `Agent` (or OpenAI completion
+The resulting string is ready to drop into another `Agent` (or OpenAI completion
 call) as its `system` value.
 
 ## 8. Future Improvements
@@ -135,4 +143,4 @@ call) as its `system` value.
 
 ---
 
-© 2025 Chris Sells. Licensed under MIT.
+© 2025 Chris Sells. Licensed under MIT.

@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'system_prompt_optimizer.dart';
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 
 void main() async {
   print('System Message Optimizer Demo\n');
   print('=' * 50);
-  print('\n');
 
   // Define test inputs
   final baseSystem = '''
@@ -135,13 +134,14 @@ based on available ingredients, dietary restrictions, and user preferences.
 
   print('Optimizing system message...\n');
 
-  final result = await optimizeSystemPrompt(
+  await optimizeSystemPrompt(
     baseSystem: baseSystem,
     samplePrompts: samplePrompts,
     toolSchemas: [searchRecipeSchema, nutritionInfoSchema],
     outputSchema: recipeOutputSchema,
-    model: 'google:gemini-2.5-pro',
-  );
+    model: 'gemini:gemini-2.5-pro',
+  ).forEach(stdout.write);
+  stdout.writeln();
 
   print('\n\n${'-' * 50}');
   print('OPTIMIZATION COMPLETE');

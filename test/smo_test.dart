@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../bin/system_prompt_optimizer.dart';
+import 'test_helpers.dart';
 
 void main() {
   group('System Message Optimizer Tests', () {
@@ -78,7 +78,7 @@ void main() {
             samplePrompts: [samplePrompts.first],
             toolSchemas: [],
             outputSchema: null,
-            model: 'openai:gpt-4o-mini',
+            model: 'google:gemini-2.5-flash',
           );
 
           expect(result, isA<OptimizedConfig>());
@@ -93,7 +93,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Check for security/confidentiality language
@@ -117,7 +117,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Tool schemas should be included as JSON
@@ -132,7 +132,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -145,7 +145,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Should include guidance on how to use tools
@@ -168,7 +168,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Output schema should be included
@@ -184,7 +184,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Should include strict compliance language
@@ -207,7 +207,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -222,7 +222,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -235,7 +235,7 @@ void main() {
           samplePrompts: samplePrompts, // 3 prompts
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -256,7 +256,7 @@ void main() {
             samplePrompts: specificPrompts,
             toolSchemas: [],
             outputSchema: null,
-            model: 'openai:gpt-4o-mini',
+            model: 'google:gemini-2.5-flash',
           );
 
           // Should maintain luxury focus, not be constrained by economy examples
@@ -268,13 +268,13 @@ void main() {
     });
 
     group('Model Support', () {
-      test('optimizeSystem works with OpenAI models', () async {
+      test('optimizeSystem works with Google models', () async {
         final result = await optimizeSystemPrompt(
           baseSystem: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -302,7 +302,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: itinerarySchema,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -325,7 +325,7 @@ void main() {
           samplePrompts: ['What\'s fun to do in Tokyo?'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         // Should preserve casual tone
@@ -362,7 +362,7 @@ void main() {
             },
           ],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result.optimizedSystem, contains('Kubernetes'));
@@ -395,7 +395,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['How do I optimize database queries?'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -410,7 +410,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['Calculate ∫(x²)dx'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -423,7 +423,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['Do something'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'openai:gpt-4o-mini',
+          model: 'google:gemini-2.5-flash',
         );
 
         expect(result, isA<OptimizedConfig>());

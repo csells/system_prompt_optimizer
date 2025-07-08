@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../bin/system_prompt_optimizer.dart';
+import 'test_helpers.dart';
 
 void main() {
   group('SMO Streaming Tests', () {
@@ -15,7 +15,7 @@ void main() {
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
-        model: 'openai:gpt-4o-mini',
+        model: 'google:gemini-2.5-flash',
       );
 
       // The function should complete and return a result
@@ -31,7 +31,7 @@ void main() {
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
-        model: 'openai:gpt-4o-mini',
+        model: 'google:gemini-2.5-flash',
       );
 
       expect(result, isA<OptimizedConfig>());
@@ -68,7 +68,7 @@ You are an AI assistant with multiple responsibilities:
             'confidence': {'type': 'number', 'minimum': 0, 'maximum': 1},
           },
         },
-        model: 'openai:gpt-4o-mini',
+        model: 'google:gemini-2.5-flash',
       );
 
       // Verify the result is properly formed
@@ -147,7 +147,7 @@ You are an AI assistant with multiple responsibilities:
             },
           },
         },
-        model: 'openai:gpt-4o-mini',
+        model: 'google:gemini-2.5-flash',
       );
 
       final endTime = DateTime.now();
@@ -185,7 +185,7 @@ You are a multilingual assistant who can help in:
         ],
         toolSchemas: [],
         outputSchema: null,
-        model: 'openai:gpt-4o-mini',
+        model: 'google:gemini-2.5-flash',
       );
 
       expect(result, isA<OptimizedConfig>());
