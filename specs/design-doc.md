@@ -29,7 +29,7 @@ directives, schema enforcement rules, and best‑practice guardrails.
 | Parameter       | Type                        | Required         | Description                                            |
 | --------------- | --------------------------- | ---------------- | ------------------------------------------------------ |
 | `baseSystem`    | `String`                    | ✅                | Original system message from the user.                 |
-| `samplePrompts` | `List<String>`              | ✅                | 1–3 representative prompts (reference only).           |
+| `samplePrompts` | `List<String>`              | ✅ (may be empty) | 1–3 representative prompts (reference only).           |
 | `toolSchemas`   | `List<Map<String,dynamic>>` | ✅ (may be empty) | JSON‑schema‑like maps describing each available tool.  |
 | `outputSchema`  | `Map<String,dynamic>?`      | Optional         | JSON schema the downstream response **must** satisfy.  |
 | `model`         | `String`                    | ✅                | Model identifier for the SMO Agent (e.g. `openai:gpt-4o-mini`). |
@@ -50,12 +50,16 @@ or process the output incrementally.
 
 A static, multi‑rule instruction block that tells the Agent how to:
 
-* Preserve intent and tone  
+* Preserve intent and tone from the original base system message
 * Insert tool & output schemas verbatim inside fenced `json` blocks  
-* Add concrete tool‑usage guidance  
-* Require 100 % schema compliance  
-* Append a confidentiality clause  
-* Emit only the final system message
+* Add concrete tool‑usage guidance for when and how to invoke each tool
+* Require 100 % schema compliance for structured outputs
+* Append a confidentiality clause to prevent system message disclosure
+* Add missing best-practice guardrails for accuracy and safety
+* Emit only the final optimized system message
+
+The SMO does not modify the schemas themselves - it copies them exactly as provided
+and wraps them with appropriate instructions for the downstream LLM.
 
 ### 5.2 SMO Prompt Builder
 
@@ -110,6 +114,7 @@ Future versions may:
 
 ```dart
 import 'dart:io';
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 
 final buffer = StringBuffer();
 

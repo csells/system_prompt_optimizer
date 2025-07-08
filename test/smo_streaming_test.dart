@@ -15,7 +15,7 @@ void main() {
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
-        model: 'google:gemini-2.5-flash',
+        model: 'openai:gpt-4o-mini',
       );
 
       // The function should complete and return a result
@@ -31,7 +31,7 @@ void main() {
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
-        model: 'google:gemini-2.5-flash',
+        model: 'openai:gpt-4o-mini',
       );
 
       expect(result, isA<OptimizedConfig>());
@@ -68,7 +68,7 @@ You are an AI assistant with multiple responsibilities:
             'confidence': {'type': 'number', 'minimum': 0, 'maximum': 1},
           },
         },
-        model: 'google:gemini-2.5-flash',
+        model: 'openai:gpt-4o-mini',
       );
 
       // Verify the result is properly formed
@@ -147,7 +147,7 @@ You are an AI assistant with multiple responsibilities:
             },
           },
         },
-        model: 'google:gemini-2.5-flash',
+        model: 'openai:gpt-4o-mini',
       );
 
       final endTime = DateTime.now();
@@ -185,7 +185,7 @@ You are a multilingual assistant who can help in:
         ],
         toolSchemas: [],
         outputSchema: null,
-        model: 'google:gemini-2.5-flash',
+        model: 'openai:gpt-4o-mini',
       );
 
       expect(result, isA<OptimizedConfig>());

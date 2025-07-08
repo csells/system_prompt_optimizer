@@ -1,6 +1,6 @@
 # System Message Optimizer (SMO)
 
-A Dart sample that optimizes system messages for Large Language Models (LLMs)
+A Dart library that optimizes system messages for Large Language Models (LLMs)
 by automatically adding tool usage guidance, schema compliance rules, and
 security guardrails.
 
@@ -12,6 +12,9 @@ with:
 - Strict output schema compliance directives  
 - Best-practice guardrails for accuracy and safety
 - Confidentiality clauses to prevent jailbreaking
+
+It preserves the intent and tone of your original system message while ensuring
+the LLM properly uses tools and follows output schemas.
 
 ## Installation
 
@@ -31,7 +34,7 @@ dart pub get
 
 ```dart
 import 'dart:io';
-import 'bin/system_prompt_optimizer.dart';
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 
 // Define your base system message
 final baseSystem = '''
@@ -77,7 +80,7 @@ await for (final chunk in optimizeSystemPrompt(
   samplePrompts: samplePrompts,
   toolSchemas: [flightToolSchema],
   outputSchema: outputSchema,
-  model: 'google:gemini-2.5-pro',
+  model: 'openai:gpt-4o-mini',
 )) {
   stdout.write(chunk); // Display streaming progress
   buffer.write(chunk);  // Collect complete message
@@ -92,8 +95,9 @@ final optimizedSystem = buffer.toString();
 dart run bin/main.dart
 ```
 
-This will demonstrate the optimizer with a cooking assistant example and save
-the result to `optimized_system_message.txt`.
+This will demonstrate the optimizer with a cooking assistant example, showing
+how it enhances a recipe recommendation system with tool usage and structured
+output.
 
 ## Running Tests
 
@@ -124,7 +128,7 @@ Stream<String> optimizeSystemPrompt({
 
 **Parameters:**
 - `baseSystem`: Your original system message
-- `samplePrompts`: 1-3 example prompts for context (reference only)
+- `samplePrompts`: 1-3 example prompts for context (reference only, not embedded in output)
 - `toolSchemas`: JSON schemas for available tools (can be empty list)
 - `outputSchema`: Optional JSON schema for response format
 - `model`: LLM model identifier (e.g., 'openai:gpt-4o-mini',
@@ -144,12 +148,12 @@ Stream<String> optimizeSystemPrompt({
 ```
 system_prompt_optimizer/
 ├── bin/
-│   ├── system_prompt_optimizer.dart  # Core SMO implementation
 │   └── main.dart                     # Demo application
 ├── lib/
-│   └── system_prompt_optimizer.dart  # Library placeholder
+│   └── system_prompt_optimizer.dart  # Core SMO implementation
 ├── test/
-│   ├── smo_test.dart                # Main test suite
+│   ├── smo_test.dart                # Main test suite  
+│   ├── smo_edge_cases_test.dart     # Edge case tests
 │   ├── smo_streaming_test.dart      # Streaming tests
 │   └── test_helpers.dart            # Test utilities
 ├── specs/

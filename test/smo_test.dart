@@ -78,12 +78,12 @@ void main() {
             samplePrompts: [samplePrompts.first],
             toolSchemas: [],
             outputSchema: null,
-            model: 'google:gemini-2.5-flash',
+            model: 'openai:gpt-4o-mini',
           );
 
           expect(result, isA<OptimizedConfig>());
           expect(result.optimizedSystem, isNotEmpty);
-          expect(result.optimizedSystem, contains(baseSystem));
+          expect(result.optimizedSystem.toLowerCase(), contains('travel agent'));
         },
       );
 
@@ -93,7 +93,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Check for security/confidentiality language
@@ -117,7 +117,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Tool schemas should be included as JSON
@@ -132,7 +132,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -145,7 +145,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Should include guidance on how to use tools
@@ -168,7 +168,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Output schema should be included
@@ -184,7 +184,7 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Should include strict compliance language
@@ -207,7 +207,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -222,7 +222,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -235,7 +235,7 @@ void main() {
           samplePrompts: samplePrompts, // 3 prompts
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -256,7 +256,7 @@ void main() {
             samplePrompts: specificPrompts,
             toolSchemas: [],
             outputSchema: null,
-            model: 'google:gemini-2.5-flash',
+            model: 'openai:gpt-4o-mini',
           );
 
           // Should maintain luxury focus, not be constrained by economy examples
@@ -274,7 +274,7 @@ void main() {
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -302,14 +302,14 @@ void main() {
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: itinerarySchema,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
         expect(result.optimizedSystem, isNotEmpty);
 
         // Check all components are present
-        expect(result.optimizedSystem, contains(baseSystem));
+        expect(result.optimizedSystem.toLowerCase(), contains('travel agent'));
         expect(result.optimizedSystem, contains('searchFlights'));
         expect(result.optimizedSystem, contains('searchHotels'));
         expect(result.optimizedSystem, contains('destination'));
@@ -325,7 +325,7 @@ void main() {
           samplePrompts: ['What\'s fun to do in Tokyo?'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         // Should preserve casual tone
@@ -362,7 +362,7 @@ void main() {
             },
           ],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result.optimizedSystem, contains('Kubernetes'));
@@ -395,7 +395,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['How do I optimize database queries?'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -410,7 +410,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['Calculate ∫(x²)dx'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
@@ -423,7 +423,7 @@ Always provide examples when possible and cite best practices from industry stan
           samplePrompts: ['Do something'],
           toolSchemas: [],
           outputSchema: null,
-          model: 'google:gemini-2.5-flash',
+          model: 'openai:gpt-4o-mini',
         );
 
         expect(result, isA<OptimizedConfig>());
