@@ -31,8 +31,8 @@ class SmoProvider extends ChangeNotifier {
   }
 
   Future<void> _initStorage() async {
-    // On web, encryption is not supported by Hive, so use regular box
-    // On mobile/desktop, use encryption for better security
+    // On web, encryption is not supported by Hive, so use regular box On
+    // mobile/desktop, use encryption for better security
     if (kIsWeb) {
       _box = await Hive.openBox(_boxName);
     } else {
@@ -76,25 +76,35 @@ class SmoProvider extends ChangeNotifier {
   }
 
   void updateBaseSystem(String value) {
-    _formData.baseSystem = value;
+    _formData.systemSystem = value;
+    notifyListeners();
+    _saveData();
+  }
+
+  void addSamplePrompt() {
+    _formData.samplePrompts = [..._formData.samplePrompts, ''];
     notifyListeners();
     _saveData();
   }
 
   void updateSamplePrompt(int index, String value) {
-    switch (index) {
-      case 0:
-        _formData.samplePrompt1 = value;
-        break;
-      case 1:
-        _formData.samplePrompt2 = value;
-        break;
-      case 2:
-        _formData.samplePrompt3 = value;
-        break;
+    final prompts = [..._formData.samplePrompts];
+    if (index >= 0 && index < prompts.length) {
+      prompts[index] = value;
+      _formData.samplePrompts = prompts;
+      notifyListeners();
+      _saveData();
     }
-    notifyListeners();
-    _saveData();
+  }
+
+  void removeSamplePrompt(int index) {
+    final prompts = [..._formData.samplePrompts];
+    if (index >= 0 && index < prompts.length) {
+      prompts.removeAt(index);
+      _formData.samplePrompts = prompts;
+      notifyListeners();
+      _saveData();
+    }
   }
 
   void updateOutputSchema(String value) {
@@ -138,19 +148,17 @@ class SmoProvider extends ChangeNotifier {
     _isStreamComplete = false;
     notifyListeners();
 
-    // This try-catch is necessary - we need to capture errors to show them in the UI
+    // This try-catch is necessary - we need to capture errors to show them in
+    // the UI
     try {
-      // The dartantic_ai package will need the API key to be set
-      // For now, we'll include it in the model string format
-      // In a production app, this would be handled more securely
-      final modelWithKey = '${_formData.model}?apiKey=${_formData.apiKey}';
-
       final stream = optimizeSystemPrompt(
-        baseSystem: _formData.baseSystem,
-        samplePrompts: _formData.samplePrompts,
+        systemPrompt: _formData.systemSystem,
+        samplePrompts: _formData.samplePrompts
+            .where((p) => p.trim().isNotEmpty)
+            .toList(),
         toolSchemas: _formData.toolSchemas,
         outputSchema: _formData.outputSchema,
-        model: modelWithKey,
+        apiKey: _formData.apiKey,
       );
 
       await for (final chunk in stream) {

@@ -1,6 +1,5 @@
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 import 'package:test/test.dart';
-
-import 'test_helpers.dart';
 
 void main() {
   group('SMO Edge Cases and Boundary Tests', () {
@@ -9,80 +8,74 @@ void main() {
     group('Empty and Minimal Inputs', () {
       test('handles empty baseSystem', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: '',
+          systemPrompt: '',
           samplePrompts: ['Do something'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('handles whitespace-only baseSystem', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: '   \n\t  ',
+          systemPrompt: '   \n\t  ',
           samplePrompts: ['Help with task'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('handles single-word baseSystem', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'Assistant',
+          systemPrompt: 'Assistant',
           samplePrompts: ['Help'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem.toLowerCase(), contains('assistant'));
+        expect(result.toLowerCase(), contains('assistant'));
       });
 
       test('handles empty sample prompts list', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a helpful assistant.',
+          systemPrompt: 'You are a helpful assistant.',
           samplePrompts: [],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('handles single empty sample prompt', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a helpful assistant.',
+          systemPrompt: 'You are a helpful assistant.',
           samplePrompts: [''],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('handles whitespace-only sample prompts', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a helpful assistant.',
+          systemPrompt: 'You are a helpful assistant.',
           samplePrompts: ['   ', '\n\t', '  \n  '],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
     });
 
@@ -102,16 +95,15 @@ void main() {
         ];
 
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a system monitoring assistant.',
+          systemPrompt: 'You are a system monitoring assistant.',
           samplePrompts: ['Check system status'],
           toolSchemas: simpleTools,
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('ping'));
-        expect(result.optimizedSystem, contains('status'));
+        expect(result, contains('ping'));
+        expect(result, contains('status'));
       });
 
       test('handles output schema with only primitives', () async {
@@ -128,66 +120,62 @@ void main() {
         };
 
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You return structured primitive data.',
+          systemPrompt: 'You return structured primitive data.',
           samplePrompts: ['Give me some data'],
           toolSchemas: [],
           outputSchema: primitiveSchema,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('string'));
-        expect(result.optimizedSystem, contains('number'));
-        expect(result.optimizedSystem, contains('boolean'));
+        expect(result, contains('string'));
+        expect(result, contains('number'));
+        expect(result, contains('boolean'));
       });
 
       test('handles empty output schema', () async {
         final emptySchema = {'type': 'object', 'properties': {}};
 
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a minimal assistant.',
+          systemPrompt: 'You are a minimal assistant.',
           samplePrompts: ['Help'],
           toolSchemas: [],
           outputSchema: emptySchema,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
     });
 
     group('All Combinations', () {
       test('absolutely minimal valid input', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'A',
+          systemPrompt: 'A',
           samplePrompts: ['B'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
-        expect(result.optimizedSystem.length, greaterThan(2));
+        expect(result, isNotEmpty);
+        expect(result.length, greaterThan(2));
       });
 
       test('everything empty except required fields', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: '',
+          systemPrompt: '',
           samplePrompts: [],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('tools but no output schema', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a tool-using assistant.',
+          systemPrompt: 'You are a tool-using assistant.',
           samplePrompts: ['Use tools to help'],
           toolSchemas: [
             {
@@ -204,16 +192,15 @@ void main() {
           ],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('search'));
-        expect(result.optimizedSystem, contains('query'));
+        expect(result, contains('search'));
+        expect(result, contains('query'));
       });
 
       test('output schema but no tools', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You return structured data.',
+          systemPrompt: 'You return structured data.',
           samplePrompts: ['Give me structured output'],
           toolSchemas: [],
           outputSchema: {
@@ -225,11 +212,10 @@ void main() {
             'required': ['result'],
           },
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('result'));
-        expect(result.optimizedSystem, contains('confidence'));
+        expect(result, contains('result'));
+        expect(result, contains('confidence'));
       });
 
       test('maximum everything - complex realistic scenario', () async {
@@ -330,53 +316,50 @@ insights with visual representations.
         };
 
         final result = await optimizeSystemPrompt(
-          baseSystem: complexSystem,
+          systemPrompt: complexSystem,
           samplePrompts: complexPrompts,
           toolSchemas: complexTools,
           outputSchema: complexSchema,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
-        expect(result.optimizedSystem, contains('analyzeData'));
-        expect(result.optimizedSystem, contains('createVisualization'));
-        expect(result.optimizedSystem, contains('analysis'));
-        expect(result.optimizedSystem, contains('visualizations'));
-        expect(result.optimizedSystem, contains('recommendations'));
+        expect(result, isNotEmpty);
+        expect(result, contains('analyzeData'));
+        expect(result, contains('createVisualization'));
+        expect(result, contains('analysis'));
+        expect(result, contains('visualizations'));
+        expect(result, contains('recommendations'));
       });
     });
 
     group('Boundary Value Tests', () {
       test('exactly one sample prompt', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a helpful assistant.',
+          systemPrompt: 'You are a helpful assistant.',
           samplePrompts: ['Single prompt'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('exactly three sample prompts', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a helpful assistant.',
+          systemPrompt: 'You are a helpful assistant.',
           samplePrompts: ['Prompt 1', 'Prompt 2', 'Prompt 3'],
           toolSchemas: [],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('exactly one tool schema', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: 'You are a single-tool assistant.',
+          systemPrompt: 'You are a single-tool assistant.',
           samplePrompts: ['Use the tool'],
           toolSchemas: [
             {
@@ -393,10 +376,9 @@ insights with visual representations.
           ],
           outputSchema: null,
           model: testModel,
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('singleTool'));
+        expect(result, contains('singleTool'));
       });
     });
   });

@@ -1,6 +1,5 @@
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 import 'package:test/test.dart';
-
-import 'test_helpers.dart';
 
 void main() {
   group('System Message Optimizer Tests', () {
@@ -74,31 +73,30 @@ void main() {
         'optimizeSystem returns OptimizedConfig with optimized message',
         () async {
           final result = await optimizeSystemPrompt(
-            baseSystem: baseSystem,
+            systemPrompt: baseSystem,
             samplePrompts: [samplePrompts.first],
             toolSchemas: [],
             outputSchema: null,
             model: 'openai:gpt-4o-mini',
-          );
+          ).join();
 
-          expect(result, isA<OptimizedConfig>());
-          expect(result.optimizedSystem, isNotEmpty);
-          expect(result.optimizedSystem.toLowerCase(), contains('travel agent'));
+          expect(result, isNotEmpty);
+          expect(result.toLowerCase(), contains('travel agent'));
         },
       );
 
       test('optimizeSystem includes confidentiality directive', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Check for security/confidentiality language
         expect(
-          result.optimizedSystem.toLowerCase(),
+          result.toLowerCase(),
           anyOf(
             contains('confidential'),
             contains('not reveal'),
@@ -113,44 +111,43 @@ void main() {
     group('Tool Schema Handling', () {
       test('optimizeSystem includes tool schemas verbatim', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Tool schemas should be included as JSON
-        expect(result.optimizedSystem, contains('searchFlights'));
-        expect(result.optimizedSystem, contains('searchHotels'));
-        expect(result.optimizedSystem, contains('```json'));
+        expect(result, contains('searchFlights'));
+        expect(result, contains('searchHotels'));
+        expect(result, contains('```json'));
       });
 
       test('optimizeSystem handles empty tool schemas', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('optimizeSystem provides tool usage guidance', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Should include guidance on how to use tools
         expect(
-          result.optimizedSystem.toLowerCase(),
+          result.toLowerCase(),
           anyOf(
             contains('tool'),
             contains('function'),
@@ -164,32 +161,32 @@ void main() {
     group('Output Schema Handling', () {
       test('optimizeSystem includes output schema when provided', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Output schema should be included
-        expect(result.optimizedSystem, contains('destination'));
-        expect(result.optimizedSystem, contains('duration'));
-        expect(result.optimizedSystem, contains('activities'));
-        expect(result.optimizedSystem, contains('```json'));
+        expect(result, contains('destination'));
+        expect(result, contains('duration'));
+        expect(result, contains('activities'));
+        expect(result, contains('```json'));
       });
 
       test('optimizeSystem enforces strict schema compliance', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts,
           toolSchemas: [],
           outputSchema: itinerarySchema,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Should include strict compliance language
         expect(
-          result.optimizedSystem.toLowerCase(),
+          result.toLowerCase(),
           anyOf(
             contains('must follow'),
             contains('strict'),
@@ -203,43 +200,40 @@ void main() {
 
       test('optimizeSystem handles null output schema', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
     });
 
     group('Sample Prompt Handling', () {
       test('optimizeSystem handles single sample prompt', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('optimizeSystem handles multiple sample prompts', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts, // 3 prompts
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test(
@@ -252,17 +246,17 @@ void main() {
           ];
 
           final result = await optimizeSystemPrompt(
-            baseSystem: 'You are a luxury travel consultant.',
+            systemPrompt: 'You are a luxury travel consultant.',
             samplePrompts: specificPrompts,
             toolSchemas: [],
             outputSchema: null,
             model: 'openai:gpt-4o-mini',
-          );
+          ).join();
 
           // Should maintain luxury focus, not be constrained by economy examples
-          expect(result.optimizedSystem, contains('luxury'));
-          expect(result.optimizedSystem, isNot(contains('economy class only')));
-          expect(result.optimizedSystem, isNot(contains('under \$500')));
+          expect(result, contains('luxury'));
+          expect(result, isNot(contains('economy class only')));
+          expect(result, isNot(contains('under \$500')));
         },
       );
     });
@@ -270,50 +264,47 @@ void main() {
     group('Model Support', () {
       test('optimizeSystem works with Google models', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
 
       test('optimizeSystem works with Google models', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: [samplePrompts.first],
           toolSchemas: [],
           outputSchema: null,
           model: 'google:gemini-2.0-flash',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
     });
 
     group('Complex Scenarios', () {
       test('optimizeSystem handles all inputs together', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: baseSystem,
+          systemPrompt: baseSystem,
           samplePrompts: samplePrompts,
           toolSchemas: [flightToolSchema, hotelToolSchema],
           outputSchema: itinerarySchema,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
 
         // Check all components are present
-        expect(result.optimizedSystem.toLowerCase(), contains('travel agent'));
-        expect(result.optimizedSystem, contains('searchFlights'));
-        expect(result.optimizedSystem, contains('searchHotels'));
-        expect(result.optimizedSystem, contains('destination'));
-        expect(result.optimizedSystem, contains('activities'));
+        expect(result.toLowerCase(), contains('travel agent'));
+        expect(result, contains('searchFlights'));
+        expect(result, contains('searchHotels'));
+        expect(result, contains('destination'));
+        expect(result, contains('activities'));
       });
 
       test('optimizeSystem maintains original tone and style', () async {
@@ -321,16 +312,16 @@ void main() {
             'Hey there! I\'m your friendly travel buddy who loves finding cool spots.';
 
         final result = await optimizeSystemPrompt(
-          baseSystem: casualSystem,
+          systemPrompt: casualSystem,
           samplePrompts: ['What\'s fun to do in Tokyo?'],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
         // Should preserve casual tone
         expect(
-          result.optimizedSystem.toLowerCase(),
+          result.toLowerCase(),
           anyOf(
             contains('friendly'),
             contains('buddy'),
@@ -346,7 +337,7 @@ void main() {
             'You are a Kubernetes deployment specialist focused on high-availability configurations.';
 
         final result = await optimizeSystemPrompt(
-          baseSystem: technicalSystem,
+          systemPrompt: technicalSystem,
           samplePrompts: ['Configure a 3-node cluster with auto-scaling'],
           toolSchemas: [
             {
@@ -363,11 +354,11 @@ void main() {
           ],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result.optimizedSystem, contains('Kubernetes'));
-        expect(result.optimizedSystem, contains('high-availability'));
-        expect(result.optimizedSystem, contains('deployYaml'));
+        expect(result, contains('Kubernetes'));
+        expect(result, contains('high-availability'));
+        expect(result, contains('deployYaml'));
       });
     });
 
@@ -391,43 +382,42 @@ Always provide examples when possible and cite best practices from industry stan
         ''';
 
         final result = await optimizeSystemPrompt(
-          baseSystem: longSystem,
+          systemPrompt: longSystem,
           samplePrompts: ['How do I optimize database queries?'],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem.length, greaterThan(longSystem.length));
+        expect(result, isNotEmpty);
+        expect(result.length, greaterThan(longSystem.length));
       });
 
       test('optimizeSystem handles special characters in inputs', () async {
         final specialSystem = 'You help with math: ∑∏∫ and symbols: α β γ δ';
 
         final result = await optimizeSystemPrompt(
-          baseSystem: specialSystem,
+          systemPrompt: specialSystem,
           samplePrompts: ['Calculate ∫(x²)dx'],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, contains('math'));
+        expect(result, isNotEmpty);
+        expect(result, contains('math'));
       });
 
       test('optimizeSystem handles empty base system gracefully', () async {
         final result = await optimizeSystemPrompt(
-          baseSystem: '',
+          systemPrompt: '',
           samplePrompts: ['Do something'],
           toolSchemas: [],
           outputSchema: null,
           model: 'openai:gpt-4o-mini',
-        );
+        ).join();
 
-        expect(result, isA<OptimizedConfig>());
-        expect(result.optimizedSystem, isNotEmpty);
+        expect(result, isNotEmpty);
       });
     });
   });

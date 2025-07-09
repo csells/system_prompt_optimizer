@@ -1,6 +1,5 @@
+import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 import 'package:test/test.dart';
-
-import 'test_helpers.dart';
 
 void main() {
   group('SMO Streaming Tests', () {
@@ -11,31 +10,29 @@ void main() {
       // Since optimizeSystem internally uses streaming, we can verify
       // that it completes successfully and returns a non-empty result
       final result = await optimizeSystemPrompt(
-        baseSystem: baseSystem,
+        systemPrompt: baseSystem,
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
         model: 'openai:gpt-4o-mini',
-      );
+      ).join();
 
       // The function should complete and return a result
-      expect(result, isA<OptimizedConfig>());
-      expect(result.optimizedSystem, isNotEmpty);
-      expect(result.optimizedSystem.length, greaterThan(baseSystem.length));
+      expect(result, isNotEmpty);
+      expect(result.length, greaterThan(baseSystem.length));
     });
 
     test('streaming handles network interruptions gracefully', () async {
       // Test with a valid model to ensure function completes
       final result = await optimizeSystemPrompt(
-        baseSystem: baseSystem,
+        systemPrompt: baseSystem,
         samplePrompts: samplePrompts,
         toolSchemas: [],
         outputSchema: null,
         model: 'openai:gpt-4o-mini',
-      );
+      ).join();
 
-      expect(result, isA<OptimizedConfig>());
-      expect(result.optimizedSystem, isNotEmpty);
+      expect(result, isNotEmpty);
     });
 
     test('streaming handles various character encodings', () async {
@@ -49,7 +46,7 @@ You are a multilingual assistant who can help in:
       ''';
 
       final result = await optimizeSystemPrompt(
-        baseSystem: multilingualSystem,
+        systemPrompt: multilingualSystem,
         samplePrompts: [
           'Translate "hello" to Spanish',
           'Write "thank you" in Japanese',
@@ -58,13 +55,12 @@ You are a multilingual assistant who can help in:
         toolSchemas: [],
         outputSchema: null,
         model: 'openai:gpt-4o-mini',
-      );
+      ).join();
 
-      expect(result, isA<OptimizedConfig>());
-      expect(result.optimizedSystem, isNotEmpty);
+      expect(result, isNotEmpty);
 
       // Verify special characters are preserved
-      expect(result.optimizedSystem, contains('multilingual'));
+      expect(result, contains('multilingual'));
     });
   });
 }

@@ -1,32 +1,23 @@
 import 'dart:convert';
+
 import 'package:json_schema/json_schema.dart';
 
 class SmoFormData {
   String apiKey;
   String model;
-  String baseSystem;
-  String samplePrompt1;
-  String samplePrompt2;
-  String samplePrompt3;
+  String systemSystem;
+  List<String> samplePrompts;
   List<Map<String, dynamic>> toolSchemas;
   String outputSchemaJson;
 
   SmoFormData({
     this.apiKey = '',
     this.model = 'google:gemini-2.5-flash',
-    this.baseSystem = '',
-    this.samplePrompt1 = '',
-    this.samplePrompt2 = '',
-    this.samplePrompt3 = '',
+    this.systemSystem = '',
+    List<String>? samplePrompts,
     this.toolSchemas = const [],
     this.outputSchemaJson = '',
-  });
-
-  List<String> get samplePrompts {
-    return [samplePrompt1, samplePrompt2, samplePrompt3]
-        .where((prompt) => prompt.trim().isNotEmpty)
-        .toList();
-  }
+  }) : samplePrompts = samplePrompts ?? [];
 
   Map<String, dynamic>? get outputSchema {
     if (outputSchemaJson.trim().isEmpty) return null;
@@ -36,8 +27,8 @@ class SmoFormData {
   bool get isValid {
     return apiKey.trim().isNotEmpty &&
         model.trim().isNotEmpty &&
-        baseSystem.trim().isNotEmpty &&
-        samplePrompts.isNotEmpty &&
+        systemSystem.trim().isNotEmpty &&
+        samplePrompts.where((p) => p.trim().isNotEmpty).isNotEmpty &&
         isOutputSchemaValid;
   }
 
@@ -57,25 +48,41 @@ class SmoFormData {
   }
 
   Map<String, dynamic> toJson() => {
-        'apiKey': apiKey,
-        'model': model,
-        'baseSystem': baseSystem,
-        'samplePrompt1': samplePrompt1,
-        'samplePrompt2': samplePrompt2,
-        'samplePrompt3': samplePrompt3,
-        'toolSchemas': toolSchemas,
-        'outputSchemaJson': outputSchemaJson,
-      };
+    'apiKey': apiKey,
+    'model': model,
+    'baseSystem': systemSystem,
+    'samplePrompts': samplePrompts,
+    'toolSchemas': toolSchemas,
+    'outputSchemaJson': outputSchemaJson,
+  };
 
   factory SmoFormData.fromJson(Map<String, dynamic> json) {
+    // Handle backward compatibility
+    List<String> prompts = [];
+    if (json.containsKey('samplePrompts')) {
+      prompts =
+          (json['samplePrompts'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+    } else {
+      // Legacy format - convert old fields
+      final prompt1 = json['samplePrompt1'] ?? '';
+      final prompt2 = json['samplePrompt2'] ?? '';
+      final prompt3 = json['samplePrompt3'] ?? '';
+      prompts = [prompt1, prompt2, prompt3]
+          .where((p) => p.toString().trim().isNotEmpty)
+          .map((p) => p.toString())
+          .toList();
+    }
+
     return SmoFormData(
       apiKey: json['apiKey'] ?? '',
       model: json['model'] ?? 'google:gemini-2.5-flash',
-      baseSystem: json['baseSystem'] ?? '',
-      samplePrompt1: json['samplePrompt1'] ?? '',
-      samplePrompt2: json['samplePrompt2'] ?? '',
-      samplePrompt3: json['samplePrompt3'] ?? '',
-      toolSchemas: (json['toolSchemas'] as List<dynamic>?)
+      systemSystem: json['baseSystem'] ?? '',
+      samplePrompts: prompts,
+      toolSchemas:
+          (json['toolSchemas'] as List<dynamic>?)
               ?.map((e) => e as Map<String, dynamic>)
               .toList() ??
           [],

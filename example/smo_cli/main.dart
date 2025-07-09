@@ -7,7 +7,7 @@ void main() async {
   print('=' * 50);
 
   // Define test inputs
-  final baseSystem = '''
+  final systemPrompt = '''
 You are a helpful AI assistant specializing in cooking and recipe recommendations.
 You should provide clear, easy-to-follow cooking instructions and suggest recipes
 based on available ingredients, dietary restrictions, and user preferences.
@@ -123,7 +123,7 @@ based on available ingredients, dietary restrictions, and user preferences.
   };
 
   print('Input Configuration:');
-  print('Base System: ${baseSystem.trim()}');
+  print('Base System: ${systemPrompt.trim()}');
   print('\nSample Prompts:');
   for (var i = 0; i < samplePrompts.length; i++) {
     print('  ${i + 1}. ${samplePrompts[i]}');
@@ -135,11 +135,10 @@ based on available ingredients, dietary restrictions, and user preferences.
   print('Optimizing system message...\n');
 
   await optimizeSystemPrompt(
-    baseSystem: baseSystem,
+    systemPrompt: systemPrompt,
     samplePrompts: samplePrompts,
     toolSchemas: [searchRecipeSchema, nutritionInfoSchema],
     outputSchema: recipeOutputSchema,
-    model: 'gemini:gemini-2.5-pro',
   ).forEach(stdout.write);
   stdout.writeln();
 

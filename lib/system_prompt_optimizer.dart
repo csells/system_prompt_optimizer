@@ -6,15 +6,16 @@ import 'package:dartantic_ai/dartantic_ai.dart';
 /// Streams the SMO’s optimized system prompt message.
 /// [model] example: 'openai:o3' or 'google:gemini-2.5-pro'.
 Stream<String> optimizeSystemPrompt({
-  required String baseSystem,
+  String model = 'google:gemini-2.5-pro',
+  String? apiKey,
+  required String systemPrompt,
   required List<String> samplePrompts,
   required List<Map<String, dynamic>> toolSchemas,
   Map<String, dynamic>? outputSchema,
-  required String model,
-}) => Agent(model, systemPrompt: _smoSystem)
+}) => Agent(model, apiKey: apiKey, systemPrompt: _smoSystem)
     .runStream(
       _buildSmoPrompt(
-        baseSystem: baseSystem,
+        systemPrompt: systemPrompt,
         samplePrompts: samplePrompts,
         toolSchemas: toolSchemas,
         outputSchema: outputSchema,
@@ -70,7 +71,7 @@ REQUIREMENTS
 // ---------------------------------------------------------------------------
 
 String _buildSmoPrompt({
-  required String baseSystem,
+  required String systemPrompt,
   required List<String> samplePrompts,
   required List<Map<String, dynamic>> toolSchemas,
   Map<String, dynamic>? outputSchema,
@@ -87,7 +88,7 @@ String _buildSmoPrompt({
 
   return """
 BASE_SYSTEM:
-$baseSystem
+$systemPrompt
 
 TOOL_SCHEMAS:
 $toolJson

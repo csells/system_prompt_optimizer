@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../providers/smo_provider.dart';
 import '../widgets/output_schema_json_editor.dart';
 import '../widgets/responsive_layout.dart';
+import '../widgets/sample_prompts_editor.dart';
 import '../widgets/tool_schema_editor.dart';
 
 class SmoScreen extends StatelessWidget {
@@ -35,9 +36,6 @@ class _FormPanelState extends State<_FormPanel> {
   late TextEditingController _apiKeyController;
   late TextEditingController _modelController;
   late TextEditingController _baseSystemController;
-  late TextEditingController _samplePrompt1Controller;
-  late TextEditingController _samplePrompt2Controller;
-  late TextEditingController _samplePrompt3Controller;
 
   @override
   void initState() {
@@ -48,16 +46,7 @@ class _FormPanelState extends State<_FormPanel> {
     _apiKeyController = TextEditingController(text: provider.formData.apiKey);
     _modelController = TextEditingController(text: provider.formData.model);
     _baseSystemController = TextEditingController(
-      text: provider.formData.baseSystem,
-    );
-    _samplePrompt1Controller = TextEditingController(
-      text: provider.formData.samplePrompt1,
-    );
-    _samplePrompt2Controller = TextEditingController(
-      text: provider.formData.samplePrompt2,
-    );
-    _samplePrompt3Controller = TextEditingController(
-      text: provider.formData.samplePrompt3,
+      text: provider.formData.systemSystem,
     );
 
     // Listen for changes from provider (when data is loaded from storage)
@@ -77,17 +66,8 @@ class _FormPanelState extends State<_FormPanel> {
     if (_modelController.text != provider.formData.model) {
       _modelController.text = provider.formData.model;
     }
-    if (_baseSystemController.text != provider.formData.baseSystem) {
-      _baseSystemController.text = provider.formData.baseSystem;
-    }
-    if (_samplePrompt1Controller.text != provider.formData.samplePrompt1) {
-      _samplePrompt1Controller.text = provider.formData.samplePrompt1;
-    }
-    if (_samplePrompt2Controller.text != provider.formData.samplePrompt2) {
-      _samplePrompt2Controller.text = provider.formData.samplePrompt2;
-    }
-    if (_samplePrompt3Controller.text != provider.formData.samplePrompt3) {
-      _samplePrompt3Controller.text = provider.formData.samplePrompt3;
+    if (_baseSystemController.text != provider.formData.systemSystem) {
+      _baseSystemController.text = provider.formData.systemSystem;
     }
   }
 
@@ -97,9 +77,6 @@ class _FormPanelState extends State<_FormPanel> {
     _apiKeyController.dispose();
     _modelController.dispose();
     _baseSystemController.dispose();
-    _samplePrompt1Controller.dispose();
-    _samplePrompt2Controller.dispose();
-    _samplePrompt3Controller.dispose();
     super.dispose();
   }
 
@@ -115,12 +92,12 @@ class _FormPanelState extends State<_FormPanel> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // API Key Section
-              _buildApiKeySection(context, provider),
-              const SizedBox(height: 24),
-
               // Model Section
               _buildModelSection(context, provider),
+              const SizedBox(height: 24),
+
+              // API Key Section
+              _buildApiKeySection(context, provider),
               const SizedBox(height: 24),
 
               // Base System Section
@@ -240,39 +217,7 @@ class _FormPanelState extends State<_FormPanel> {
     BuildContext context,
     SmoProvider provider,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Sample Prompts', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _samplePrompt1Controller,
-          onChanged: (value) => provider.updateSamplePrompt(0, value),
-          decoration: const InputDecoration(
-            hintText: 'Sample prompt 1',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _samplePrompt2Controller,
-          onChanged: (value) => provider.updateSamplePrompt(1, value),
-          decoration: const InputDecoration(
-            hintText: 'Sample prompt 2',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _samplePrompt3Controller,
-          onChanged: (value) => provider.updateSamplePrompt(2, value),
-          decoration: const InputDecoration(
-            hintText: 'Sample prompt 3',
-            border: OutlineInputBorder(),
-          ),
-        ),
-      ],
-    );
+    return const SamplePromptsEditor();
   }
 
   Widget _buildOutputSchemaSection(BuildContext context, SmoProvider provider) {
