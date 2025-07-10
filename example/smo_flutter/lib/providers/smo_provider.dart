@@ -76,7 +76,7 @@ class SmoProvider extends ChangeNotifier {
   }
 
   void updateBaseSystem(String value) {
-    _formData.systemSystem = value;
+    _formData.baseSystem = value;
     notifyListeners();
     _saveData();
   }
@@ -152,13 +152,14 @@ class SmoProvider extends ChangeNotifier {
     // the UI
     try {
       final stream = optimizeSystemPrompt(
-        systemPrompt: _formData.systemSystem,
+        model: _formData.model,
+        apiKey: _formData.apiKey,
+        systemPrompt: _formData.baseSystem,
         samplePrompts: _formData.samplePrompts
             .where((p) => p.trim().isNotEmpty)
             .toList(),
         toolSchemas: _formData.toolSchemas,
         outputSchema: _formData.outputSchema,
-        apiKey: _formData.apiKey,
       );
 
       await for (final chunk in stream) {

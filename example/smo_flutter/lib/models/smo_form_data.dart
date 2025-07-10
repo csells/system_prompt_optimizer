@@ -5,7 +5,7 @@ import 'package:json_schema/json_schema.dart';
 class SmoFormData {
   String apiKey;
   String model;
-  String systemSystem;
+  String baseSystem;
   List<String> samplePrompts;
   List<Map<String, dynamic>> toolSchemas;
   String outputSchemaJson;
@@ -13,7 +13,7 @@ class SmoFormData {
   SmoFormData({
     this.apiKey = '',
     this.model = 'google:gemini-2.5-flash',
-    this.systemSystem = '',
+    this.baseSystem = '',
     List<String>? samplePrompts,
     this.toolSchemas = const [],
     this.outputSchemaJson = '',
@@ -27,7 +27,7 @@ class SmoFormData {
   bool get isValid {
     return apiKey.trim().isNotEmpty &&
         model.trim().isNotEmpty &&
-        systemSystem.trim().isNotEmpty &&
+        baseSystem.trim().isNotEmpty &&
         samplePrompts.where((p) => p.trim().isNotEmpty).isNotEmpty &&
         isOutputSchemaValid;
   }
@@ -50,7 +50,7 @@ class SmoFormData {
   Map<String, dynamic> toJson() => {
     'apiKey': apiKey,
     'model': model,
-    'baseSystem': systemSystem,
+    'baseSystem': baseSystem,
     'samplePrompts': samplePrompts,
     'toolSchemas': toolSchemas,
     'outputSchemaJson': outputSchemaJson,
@@ -79,7 +79,7 @@ class SmoFormData {
     return SmoFormData(
       apiKey: json['apiKey'] ?? '',
       model: json['model'] ?? 'google:gemini-2.5-flash',
-      systemSystem: json['baseSystem'] ?? '',
+      baseSystem: json['baseSystem'] ?? '',
       samplePrompts: prompts,
       toolSchemas:
           (json['toolSchemas'] as List<dynamic>?)

@@ -10,6 +10,7 @@ class OutputSchemaJsonEditor extends JsonEditorBase {
     required super.onChanged,
     super.label,
     super.height,
+    super.labelAction,
   });
 
   @override

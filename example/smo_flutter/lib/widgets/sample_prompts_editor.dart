@@ -101,6 +101,31 @@ class _SamplePromptItemState extends State<_SamplePromptItem> {
     widget.onUpdate(_controller.text);
   }
 
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Sample Prompt'),
+          content: Text('Are you sure you want to remove Sample Prompt ${widget.index + 1}?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                widget.onRemove();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Remove', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -122,7 +147,7 @@ class _SamplePromptItemState extends State<_SamplePromptItem> {
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: widget.onRemove,
+            onPressed: () => _confirmDelete(context),
           ),
         ],
       ),

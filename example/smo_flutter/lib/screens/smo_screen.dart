@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/smo_provider.dart';
-import '../widgets/output_schema_json_editor.dart';
+import '../widgets/output_schema_editor.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/sample_prompts_editor.dart';
 import '../widgets/tool_schema_editor.dart';
@@ -46,7 +46,7 @@ class _FormPanelState extends State<_FormPanel> {
     _apiKeyController = TextEditingController(text: provider.formData.apiKey);
     _modelController = TextEditingController(text: provider.formData.model);
     _baseSystemController = TextEditingController(
-      text: provider.formData.systemSystem,
+      text: provider.formData.baseSystem,
     );
 
     // Listen for changes from provider (when data is loaded from storage)
@@ -66,8 +66,8 @@ class _FormPanelState extends State<_FormPanel> {
     if (_modelController.text != provider.formData.model) {
       _modelController.text = provider.formData.model;
     }
-    if (_baseSystemController.text != provider.formData.systemSystem) {
-      _baseSystemController.text = provider.formData.systemSystem;
+    if (_baseSystemController.text != provider.formData.baseSystem) {
+      _baseSystemController.text = provider.formData.baseSystem;
     }
   }
 
@@ -113,7 +113,7 @@ class _FormPanelState extends State<_FormPanel> {
               const SizedBox(height: 24),
 
               // Output Schema Section
-              _buildOutputSchemaSection(context, provider),
+              const OutputSchemaEditor(),
               const SizedBox(height: 24),
 
               // Optimize Button
@@ -220,16 +220,6 @@ class _FormPanelState extends State<_FormPanel> {
     return const SamplePromptsEditor();
   }
 
-  Widget _buildOutputSchemaSection(BuildContext context, SmoProvider provider) {
-    final isEmpty = provider.formData.outputSchemaJson.trim().isEmpty;
-
-    return OutputSchemaJsonEditor(
-      label: 'Output Schema (Optional)',
-      value: provider.formData.outputSchemaJson,
-      onChanged: provider.updateOutputSchema,
-      height: isEmpty ? 120 : 300, // Smaller height when empty
-    );
-  }
 }
 
 class _OutputPanel extends StatelessWidget {

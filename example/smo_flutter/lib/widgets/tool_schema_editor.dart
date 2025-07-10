@@ -81,6 +81,31 @@ class _ToolSchemaItem extends StatelessWidget {
     }
   }
 
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Tool Schema'),
+          content: Text('Are you sure you want to remove Tool ${index + 1}?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                onRemove();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Remove', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final toolName = schema['name'] ?? 'Unnamed Tool';
@@ -95,7 +120,7 @@ class _ToolSchemaItem extends StatelessWidget {
         height: 250,
         labelAction: IconButton(
           icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: onRemove,
+          onPressed: () => _confirmDelete(context),
         ),
       ),
     );
