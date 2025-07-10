@@ -4,6 +4,10 @@ A Dart library that optimizes system messages for Large Language Models (LLMs)
 by automatically adding tool usage guidance, schema compliance rules, and
 security guardrails.
 
+See it [in action here](https://system-prompt-optimizer452.web.app/).
+
+![System Prompt Optimization in Action](readme/screenshot.png)
+
 ## Overview
 
 The System Prompt Optimizer takes your base system message and enhances it
@@ -76,7 +80,7 @@ final outputSchema = {
 final buffer = StringBuffer();
 
 await for (final chunk in optimizeSystemPrompt(
-  baseSystem: baseSystem,
+  systemPrompt: baseSystem,
   samplePrompts: samplePrompts,
   toolSchemas: [flightToolSchema],
   outputSchema: outputSchema,
@@ -89,10 +93,12 @@ await for (final chunk in optimizeSystemPrompt(
 final optimizedSystem = buffer.toString();
 ```
 
-## Running the Demo
+## Running the Demos
 
 ```bash
-dart run bin/main.dart
+$ dart run example/smo_cli/main.dart
+
+$ cd example/spo_flutter && flutter run
 ```
 
 This will demonstrate the optimizer with a cooking assistant example, showing
@@ -118,49 +124,25 @@ dart test -r expanded
 
 ```dart
 Stream<String> optimizeSystemPrompt({
-  required String baseSystem,
+  String model = 'google:gemini-2.5-pro',
+  String? apiKey,
+  required String systemPrompt,
   required List<String> samplePrompts,
   required List<Map<String, dynamic>> toolSchemas,
   Map<String, dynamic>? outputSchema,
-  required String model,
 })
 ```
 
 **Parameters:**
-- `baseSystem`: Your original system message
+- `model`: LLM model identifier (e.g., 'openai:gpt-4o-mini', 'google:gemini-2.0-flash'). Defaults to 'google:gemini-2.5-pro'
+- `apiKey`: Optional API key for the model provider
+- `systemPrompt`: Your original system message
 - `samplePrompts`: 1-3 example prompts for context (reference only, not embedded in output)
 - `toolSchemas`: JSON schemas for available tools (can be empty list)
 - `outputSchema`: Optional JSON schema for response format
-- `model`: LLM model identifier (e.g., 'openai:gpt-4o-mini',
-  'google:gemini-2.0-flash')
 
 **Returns:**
 - A `Stream<String>` that yields the optimized system message in chunks
 
 ## Supported Models
-
-- OpenAI: `openai:gpt-4`, `openai:gpt-4o-mini`, etc.
-- Google: `google:gemini-2.0-flash`, `google:gemini-2.5-pro`, etc.
-- Any model supported by the `dartantic_ai` package
-
-## Project Structure
-
-```
-system_prompt_optimizer/
-├── bin/
-│   └── main.dart                     # Demo application
-├── lib/
-│   └── system_prompt_optimizer.dart  # Core SPO implementation
-├── test/
-│   ├── spo_test.dart                # Main test suite  
-│   ├── spo_edge_cases_test.dart     # Edge case tests
-│   ├── spo_streaming_test.dart      # Streaming tests
-│   └── test_helpers.dart            # Test utilities
-├── specs/
-│   └── design-doc.md                # Detailed design document
-└── README.md                        # This file
-```
-
-## License
-
-© 2025 Chris Sells. Licensed under MIT.
+Any model supported by [the `dartantic_ai` package](https://dartantic.ai).

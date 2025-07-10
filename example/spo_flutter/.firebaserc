@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "dartantic"
-  }
+  },
+  "targets": {
+    "dartantic": {
+      "hosting": {
+        "mainsite": [
+          "dartantic"
+        ],
+        "secondaryapp": [
+          "system-prompt-optimizer452"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
