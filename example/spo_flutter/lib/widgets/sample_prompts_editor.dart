@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/smo_provider.dart';
+import '../providers/spo_provider.dart';
 
 class SamplePromptsEditor extends StatelessWidget {
   const SamplePromptsEditor({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SmoProvider>(
+    return Consumer<SpoProvider>(
       builder: (context, provider, child) {
         final prompts = provider.formData.samplePrompts;
 

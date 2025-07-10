@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/smo_provider.dart';
+import '../providers/spo_provider.dart';
 import 'output_schema_json_editor.dart';
 
 class OutputSchemaEditor extends StatelessWidget {
   const OutputSchemaEditor({super.key});
 
-  void _confirmDelete(BuildContext context, SmoProvider provider) {
+  void _confirmDelete(BuildContext context, SpoProvider provider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -49,7 +49,7 @@ class OutputSchemaEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SmoProvider>(
+    return Consumer<SpoProvider>(
       builder: (context, provider, child) {
         final hasSchema = provider.formData.outputSchemaJson.trim().isNotEmpty;
 

@@ -4,29 +4,29 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 
-import '../models/smo_form_data.dart';
+import '../models/spo_form_data.dart';
 
-class SmoProvider extends ChangeNotifier {
-  static const _boxName = 'smo_secure_box';
-  static const _storageKey = 'smo_form_data';
+class SpoProvider extends ChangeNotifier {
+  static const _boxName = 'spo_secure_box';
+  static const _storageKey = 'spo_form_data';
 
   late Box _box;
 
-  SmoFormData _formData = SmoFormData();
+  SpoFormData _formData = SpoFormData();
   String _optimizedOutput = '';
   bool _isOptimizing = false;
   String? _error;
   bool _isStreamComplete = false;
   bool _isInitialized = false;
 
-  SmoFormData get formData => _formData;
+  SpoFormData get formData => _formData;
   String get optimizedOutput => _optimizedOutput;
   bool get isOptimizing => _isOptimizing;
   String? get error => _error;
   bool get isStreamComplete => _isStreamComplete;
   bool get isInitialized => _isInitialized;
 
-  SmoProvider() {
+  SpoProvider() {
     _initStorage();
   }
 
@@ -36,7 +36,7 @@ class SmoProvider extends ChangeNotifier {
     if (kIsWeb) {
       _box = await Hive.openBox(_boxName);
     } else {
-      const encryptionKey = 'SMOSecureKey32CharactersLong!!!!'; // 32 bytes
+      const encryptionKey = 'SPOSecureKey32CharactersLong!!!!'; // 32 bytes
       final encryptionKeyBytes = utf8.encode(encryptionKey);
       _box = await Hive.openBox(
         _boxName,
@@ -53,7 +53,7 @@ class SmoProvider extends ChangeNotifier {
     final jsonString = _box.get(_storageKey) as String?;
     if (jsonString != null) {
       final decoded = json.decode(jsonString);
-      _formData = SmoFormData.fromJson(decoded);
+      _formData = SpoFormData.fromJson(decoded);
       notifyListeners();
     }
   }

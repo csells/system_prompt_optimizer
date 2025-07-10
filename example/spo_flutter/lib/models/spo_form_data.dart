@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:json_schema/json_schema.dart';
 
-class SmoFormData {
+class SpoFormData {
   String apiKey;
   String model;
   String baseSystem;
@@ -10,7 +10,7 @@ class SmoFormData {
   List<Map<String, dynamic>> toolSchemas;
   String outputSchemaJson;
 
-  SmoFormData({
+  SpoFormData({
     this.apiKey = '',
     this.model = 'google:gemini-2.5-flash',
     this.baseSystem = '',
@@ -56,7 +56,7 @@ class SmoFormData {
     'outputSchemaJson': outputSchemaJson,
   };
 
-  factory SmoFormData.fromJson(Map<String, dynamic> json) {
+  factory SpoFormData.fromJson(Map<String, dynamic> json) {
     // Handle backward compatibility
     List<String> prompts = [];
     if (json.containsKey('samplePrompts')) {
@@ -76,7 +76,7 @@ class SmoFormData {
           .toList();
     }
 
-    return SmoFormData(
+    return SpoFormData(
       apiKey: json['apiKey'] ?? '',
       model: json['model'] ?? 'google:gemini-2.5-flash',
       baseSystem: json['baseSystem'] ?? '',

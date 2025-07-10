@@ -1,0 +1,11 @@
+// firebase_empty_deploy.json
+{
+  "hosting": {
+    "public": "empty_hosting_content",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

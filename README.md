@@ -1,4 +1,4 @@
-# System Message Optimizer (SMO)
+# System Prompt Optimizer (SPO)
 
 A Dart library that optimizes system messages for Large Language Models (LLMs)
 by automatically adding tool usage guidance, schema compliance rules, and
@@ -6,7 +6,7 @@ security guardrails.
 
 ## Overview
 
-The System Message Optimizer takes your base system message and enhances it
+The System Prompt Optimizer takes your base system message and enhances it
 with:
 - Clear tool invocation instructions
 - Strict output schema compliance directives  
@@ -106,7 +106,7 @@ output.
 dart test
 
 # Run specific test file
-dart test test/smo_test.dart
+dart test test/spo_test.dart
 
 # Run with verbose output
 dart test -r expanded
@@ -150,11 +150,11 @@ system_prompt_optimizer/
 ├── bin/
 │   └── main.dart                     # Demo application
 ├── lib/
-│   └── system_prompt_optimizer.dart  # Core SMO implementation
+│   └── system_prompt_optimizer.dart  # Core SPO implementation
 ├── test/
-│   ├── smo_test.dart                # Main test suite  
-│   ├── smo_edge_cases_test.dart     # Edge case tests
-│   ├── smo_streaming_test.dart      # Streaming tests
+│   ├── spo_test.dart                # Main test suite  
+│   ├── spo_edge_cases_test.dart     # Edge case tests
+│   ├── spo_streaming_test.dart      # Streaming tests
 │   └── test_helpers.dart            # Test utilities
 ├── specs/
 │   └── design-doc.md                # Detailed design document

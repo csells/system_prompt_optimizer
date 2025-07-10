@@ -3,20 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../providers/smo_provider.dart';
+import '../providers/spo_provider.dart';
 import '../widgets/output_schema_editor.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/sample_prompts_editor.dart';
 import '../widgets/tool_schema_editor.dart';
 
-class SmoScreen extends StatelessWidget {
-  const SmoScreen({super.key});
+class SpoScreen extends StatelessWidget {
+  const SpoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('System Message Optimizer'),
+        title: const Text('System Prompt Optimizer'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ResponsiveLayout(
@@ -40,7 +40,7 @@ class _FormPanelState extends State<_FormPanel> {
   @override
   void initState() {
     super.initState();
-    final provider = context.read<SmoProvider>();
+    final provider = context.read<SpoProvider>();
 
     // Initialize controllers with current values
     _apiKeyController = TextEditingController(text: provider.formData.apiKey);
@@ -59,7 +59,7 @@ class _FormPanelState extends State<_FormPanel> {
   }
 
   void _updateControllers() {
-    final provider = context.read<SmoProvider>();
+    final provider = context.read<SpoProvider>();
     if (_apiKeyController.text != provider.formData.apiKey) {
       _apiKeyController.text = provider.formData.apiKey;
     }
@@ -73,7 +73,7 @@ class _FormPanelState extends State<_FormPanel> {
 
   @override
   void dispose() {
-    context.read<SmoProvider>().removeListener(_updateControllers);
+    context.read<SpoProvider>().removeListener(_updateControllers);
     _apiKeyController.dispose();
     _modelController.dispose();
     _baseSystemController.dispose();
@@ -82,7 +82,7 @@ class _FormPanelState extends State<_FormPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SmoProvider>(
+    return Consumer<SpoProvider>(
       builder: (context, provider, child) {
         if (!provider.isInitialized) {
           return const Center(child: CircularProgressIndicator());
@@ -139,7 +139,7 @@ class _FormPanelState extends State<_FormPanel> {
     );
   }
 
-  Widget _buildApiKeySection(BuildContext context, SmoProvider provider) {
+  Widget _buildApiKeySection(BuildContext context, SpoProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,7 +173,7 @@ class _FormPanelState extends State<_FormPanel> {
     );
   }
 
-  Widget _buildModelSection(BuildContext context, SmoProvider provider) {
+  Widget _buildModelSection(BuildContext context, SpoProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -191,7 +191,7 @@ class _FormPanelState extends State<_FormPanel> {
     );
   }
 
-  Widget _buildBaseSystemSection(BuildContext context, SmoProvider provider) {
+  Widget _buildBaseSystemSection(BuildContext context, SpoProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -215,7 +215,7 @@ class _FormPanelState extends State<_FormPanel> {
 
   Widget _buildSamplePromptsSection(
     BuildContext context,
-    SmoProvider provider,
+    SpoProvider provider,
   ) {
     return const SamplePromptsEditor();
   }
@@ -225,7 +225,7 @@ class _FormPanelState extends State<_FormPanel> {
 class _OutputPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<SmoProvider>(
+    return Consumer<SpoProvider>(
       builder: (context, provider, child) {
         if (provider.error != null) {
           return Center(

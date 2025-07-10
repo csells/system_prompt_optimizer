@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Dart command-line application for optimizing system prompts for Large Language Models (LLMs). The System Message Optimizer (SMO) takes a base system message and enhances it with best practices, tool schemas, and output formatting requirements.
+This is a Dart command-line application for optimizing system prompts for Large Language Models (LLMs). The System Prompt Optimizer (SPO) takes a base system message and enhances it with best practices, tool schemas, and output formatting requirements.
 
 ## Commands
 
@@ -43,7 +43,7 @@ The main implementation is in `bin/system_prompt_optimizer.dart`, which provides
 - Returns an `OptimizedConfig` containing the enhanced system message
 
 ### Project Structure
-- `/bin/` - Main SMO implementation (system_prompt_optimizer.dart)
+- `/bin/` - Main SPO implementation (system_prompt_optimizer.dart)
 - `/lib/` - Library code (currently contains placeholder code)
 - `/test/` - Unit tests (currently only tests placeholder functionality)
 
@@ -55,6 +55,6 @@ The main implementation is in `bin/system_prompt_optimizer.dart`, which provides
 
 ## Current State Notes
 - The main functionality exists but lacks a CLI entry point with a main() function
-- Tests need to be written for the actual SMO functionality
+- Tests need to be written for the actual SPO functionality
 - The library file contains only placeholder code
 - Documentation is minimal beyond code comments

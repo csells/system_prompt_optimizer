@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:dartantic_ai/dartantic_ai.dart';
 
-/// Streams the SMO’s optimized system prompt message.
+/// Streams the SPO's optimized system prompt message.
 /// [model] example: 'openai:o3' or 'google:gemini-2.5-pro'.
 Stream<String> optimizeSystemPrompt({
   String model = 'google:gemini-2.5-pro',
@@ -12,9 +12,9 @@ Stream<String> optimizeSystemPrompt({
   required List<String> samplePrompts,
   required List<Map<String, dynamic>> toolSchemas,
   Map<String, dynamic>? outputSchema,
-}) => Agent(model, apiKey: apiKey, systemPrompt: _smoSystem)
+}) => Agent(model, apiKey: apiKey, systemPrompt: _spoSystem)
     .runStream(
-      _buildSmoPrompt(
+      _buildSpoPrompt(
         systemPrompt: systemPrompt,
         samplePrompts: samplePrompts,
         toolSchemas: toolSchemas,
@@ -24,11 +24,11 @@ Stream<String> optimizeSystemPrompt({
     .map((r) => r.output);
 
 // ---------------------------------------------------------------------------
-// 💡  THE SYSTEM-MESSAGE OPTIMIZER (SMO) SYSTEM MESSAGE
+// 💡  THE SYSTEM-PROMPT OPTIMIZER (SPO) SYSTEM MESSAGE
 // ---------------------------------------------------------------------------
 
-const String _smoSystem = r"""
-You are **System-Message Optimizer (SMO)**.  
+const String _spoSystem = r"""
+You are **System-Prompt Optimizer (SPO)**.  
 Input arrives via the user prompt and contains:
 
  • **base_system** - a complete system-message string.  
@@ -67,10 +67,10 @@ REQUIREMENTS
 """;
 
 // ---------------------------------------------------------------------------
-// PROMPT BUILDER - fills in the SMO’s template with caller-supplied data.
+// PROMPT BUILDER - fills in the SPO's template with caller-supplied data.
 // ---------------------------------------------------------------------------
 
-String _buildSmoPrompt({
+String _buildSpoPrompt({
   required String systemPrompt,
   required List<String> samplePrompts,
   required List<Map<String, dynamic>> toolSchemas,

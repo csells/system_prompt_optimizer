@@ -1,4 +1,4 @@
-# System‑Message Optimizer (SMO) – Design Document
+# System‑Prompt Optimizer (SPO) – Design Document
 
 _Last updated: 08 Jul 2025_
 
@@ -6,7 +6,7 @@ _Last updated: 08 Jul 2025_
 
 ## 1. Purpose
 
-The **System‑Message Optimizer (SMO)** is a lightweight service that takes a
+The **System‑Prompt Optimizer (SPO)** is a lightweight service that takes a
 user‑supplied system message, sample prompts, optional tool schemas, and an
 optional typed output schema, and produces a single optimized system message.  
 The optimized message preserves the caller's intent while adding clear tooling
@@ -22,7 +22,7 @@ directives, schema enforcement rules, and best‑practice guardrails.
   model sees exactly what arguments and response structure are required.  
 * **Security** – Embed a confidentiality directive to minimize jailbreak risk.  
 * **Ease of Integration** – Provide a single Dart function (`optimizeSystemPrompt`)
-  that streams the SMO's answer as it's generated.
+  that streams the SPO's answer as it's generated.
 
 ## 3. Inputs
 
@@ -32,7 +32,7 @@ directives, schema enforcement rules, and best‑practice guardrails.
 | `samplePrompts` | `List<String>`              | ✅ (may be empty) | 1–3 representative prompts (reference only).           |
 | `toolSchemas`   | `List<Map<String,dynamic>>` | ✅ (may be empty) | JSON‑schema‑like maps describing each available tool.  |
 | `outputSchema`  | `Map<String,dynamic>?`      | Optional         | JSON schema the downstream response **must** satisfy.  |
-| `model`         | `String`                    | ✅                | Model identifier for the SMO Agent (e.g. `openai:gpt-4o-mini`). |
+| `model`         | `String`                    | ✅                | Model identifier for the SPO Agent (e.g. `openai:gpt-4o-mini`). |
 
 ## 4. Output
 
@@ -46,7 +46,7 @@ or process the output incrementally.
 
 ## 5. Architecture
 
-### 5.1 SMO System Message
+### 5.1 SPO System Message
 
 A static, multi‑rule instruction block that tells the Agent how to:
 
@@ -58,10 +58,10 @@ A static, multi‑rule instruction block that tells the Agent how to:
 * Add missing best-practice guardrails for accuracy and safety
 * Emit only the final optimized system message
 
-The SMO does not modify the schemas themselves - it copies them exactly as provided
+The SPO does not modify the schemas themselves - it copies them exactly as provided
 and wraps them with appropriate instructions for the downstream LLM.
 
-### 5.2 SMO Prompt Builder
+### 5.2 SPO Prompt Builder
 
 Generates a prompt by splicing caller inputs into labeled sections:
 
@@ -85,7 +85,7 @@ Stream<String> optimizeSystemPrompt({ ... });
 ```
 
 1. Constructs an `Agent` with:  
-   * `system` → static SMO System Message  
+   * `system` → static SPO System Message  
    * `prompt` → built prompt from inputs  
 2. Returns a stream that yields tokens via `runStream`.  
 3. Callers can consume the stream to get the complete optimized system message.
@@ -101,7 +101,7 @@ At present, the helper:
 
 * Assumes tool and output schemas are syntactically valid JSON‑serializable
   maps.  
-* Does not retry or self‑validate the SMO's output; schema validation is
+* Does not retry or self‑validate the SPO's output; schema validation is
   expected in downstream code if needed.  
 * Propagates any SDK/network exceptions to the caller.
 
@@ -135,7 +135,34 @@ final optimizedSystem = buffer.toString();
 The resulting string is ready to drop into another `Agent` (or OpenAI completion
 call) as its `system` value.
 
-## 8. Future Improvements
+## 8. Flutter Web App Implementation
+
+The SPO Flutter web app (`example/spo_flutter`) provides a user-friendly interface for the System Prompt Optimizer with the following features:
+
+### 8.1 User Experience Enhancements
+
+* **Smart Defaults** – Weather-themed example data helps users understand how the components work together:
+  - First sample prompt: "lookup the weather in Boston"
+  - Default tool schema: `get_weather` function accepting a location parameter
+  - Default output schema: Weather response with temperature and conditions
+* **Real-time Validation** – JSON editors validate syntax as you type with visual indicators
+* **Responsive Design** – Automatically adapts between desktop (side-by-side) and mobile (tabbed) layouts
+* **Persistent Storage** – API keys and form data are encrypted and saved locally using Hive
+
+### 8.2 Technical Implementation
+
+* **State Management** – Uses Provider pattern for reactive UI updates
+* **JSON Editing** – Simple TextField with monospace font (removed re_editor due to auto-quote issues)
+* **Error Handling** – Graceful handling of JSON parsing errors during typing
+* **Platform Support** – Works on Web and macOS (with network entitlements configured)
+
+### 8.3 Security Considerations
+
+* **Encrypted Storage** – API keys are encrypted using AES on native platforms
+* **Network Permissions** – macOS entitlements properly configured for API access
+* **Input Validation** – All JSON inputs are validated before submission
+
+## 9. Future Improvements
 
 * **Multi‑pass refinement** – Loop until a validator confirms the optimized
   message meets internal quality checks.  
@@ -145,6 +172,11 @@ call) as its `system` value.
   modules.  
 * **Caching** – Memoize results for identical input bundles to save tokens and
   latency.
+* **Flutter App Enhancements**:
+  - Import/export functionality for sharing configurations
+  - Multiple saved configurations
+  - Dark mode support
+  - Advanced JSON editor features (without the auto-quote annoyance)
 
 ---
 

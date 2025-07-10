@@ -2,7 +2,7 @@ import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('SMO Streaming Tests', () {
+  group('SPO Streaming Tests', () {
     final baseSystem = 'You are a helpful assistant.';
     final samplePrompts = ['Help me plan a trip'];
 

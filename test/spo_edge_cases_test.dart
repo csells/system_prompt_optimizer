@@ -2,7 +2,7 @@ import 'package:system_prompt_optimizer/system_prompt_optimizer.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('SMO Edge Cases and Boundary Tests', () {
+  group('SPO Edge Cases and Boundary Tests', () {
     const testModel = 'openai:gpt-4o-mini';
 
     group('Empty and Minimal Inputs', () {

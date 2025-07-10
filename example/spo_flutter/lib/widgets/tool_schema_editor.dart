@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/smo_provider.dart';
+import '../providers/spo_provider.dart';
 import 'tool_schema_json_editor.dart';
 
 class ToolSchemaEditor extends StatelessWidget {
@@ -9,7 +9,7 @@ class ToolSchemaEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SmoProvider>(
+    return Consumer<SpoProvider>(
       builder: (context, provider, child) {
         final schemas = provider.formData.toolSchemas;
 
@@ -48,7 +48,7 @@ class ToolSchemaEditor extends StatelessWidget {
     );
   }
 
-  void _addNewTool(BuildContext context, SmoProvider provider) {
+  void _addNewTool(BuildContext context, SpoProvider provider) {
     provider.addToolSchema({
       'name': 'get_weather',
       'description': 'Get current weather for a location',
