@@ -50,11 +50,17 @@ class ToolSchemaEditor extends StatelessWidget {
 
   void _addNewTool(BuildContext context, SmoProvider provider) {
     provider.addToolSchema({
-      'name': 'toolName',
-      'description': 'Tool description',
+      'name': 'get_weather',
+      'description': 'Get current weather for a location',
       'parameters': {
         'type': 'object',
-        'properties': {},
+        'properties': {
+          'location': {
+            'type': 'string',
+            'description': 'City name or coordinates'
+          }
+        },
+        'required': ['location']
       },
     });
   }

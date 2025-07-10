@@ -35,20 +35,16 @@ class OutputSchemaEditor extends StatelessWidget {
   static const String _sampleSchema = '''{
   "type": "object",
   "properties": {
-    "name": {
-      "type": "string",
-      "description": "The name of the item"
-    },
-    "quantity": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "price": {
+    "temperature": {
       "type": "number",
-      "minimum": 0
+      "description": "Temperature in Celsius"
+    },
+    "conditions": {
+      "type": "string",
+      "description": "Weather conditions (e.g., sunny, cloudy, rainy)"
     }
   },
-  "required": ["name", "quantity"]
+  "required": ["temperature", "conditions"]
 }''';
 
   @override

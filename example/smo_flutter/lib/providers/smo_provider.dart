@@ -82,7 +82,11 @@ class SmoProvider extends ChangeNotifier {
   }
 
   void addSamplePrompt() {
-    _formData.samplePrompts = [..._formData.samplePrompts, ''];
+    // Add weather-themed prompt for the first one, empty for others
+    final newPrompt = _formData.samplePrompts.isEmpty 
+        ? 'lookup the weather in Boston'
+        : '';
+    _formData.samplePrompts = [..._formData.samplePrompts, newPrompt];
     notifyListeners();
     _saveData();
   }
