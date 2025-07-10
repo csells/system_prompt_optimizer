@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:re_editor/re_editor.dart';
-import 'package:re_highlight/languages/json.dart';
-import 'package:re_highlight/styles/github.dart';
 
 abstract class JsonEditorBase extends StatefulWidget {
   final String value;
@@ -26,13 +21,10 @@ abstract class JsonEditorBase extends StatefulWidget {
 
 abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
   late TextEditingController _textController;
-  late CodeLineEditingController _codeController;
   bool _isValid = true;
   String? _formattedJson;
   String? _validationMessage;
-
-  // Use simple TextField on macOS to avoid crash, re_editor on other platforms
-  bool get _useMacOSFallback => !kIsWeb && Platform.isMacOS;
+  bool _isUpdatingProgrammatically = false;
 
   // Override this to provide custom validation logic
   ValidationResult validateJson(String text);
@@ -40,20 +32,8 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
   @override
   void initState() {
     super.initState();
-
-    if (_useMacOSFallback) {
-      _textController = TextEditingController(text: widget.value);
-      _textController.addListener(_onTextChanged);
-    } else {
-      _codeController = CodeLineEditingController.fromText(widget.value);
-      // Add listener after first frame to avoid build-time setState
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _codeController.addListener(_onTextChanged);
-        }
-      });
-    }
-
+    _textController = TextEditingController(text: widget.value);
+    _textController.addListener(_onTextChanged);
     _validateJson(widget.value);
   }
 
@@ -61,36 +41,31 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
   void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      if (_useMacOSFallback) {
-        if (_textController.text != widget.value) {
-          _textController.text = widget.value;
-          _validateJson(widget.value);
-        }
-      } else {
-        if (_codeController.text != widget.value) {
-          _codeController.text = widget.value;
-          _validateJson(widget.value);
-        }
+      _isUpdatingProgrammatically = true;
+      if (_textController.text != widget.value) {
+        _textController.text = widget.value;
+        _validateJson(widget.value);
       }
+      // Schedule the flag reset after the current frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _isUpdatingProgrammatically = false;
+        }
+      });
     }
   }
 
   @override
   void dispose() {
-    if (_useMacOSFallback) {
-      _textController.removeListener(_onTextChanged);
-      _textController.dispose();
-    } else {
-      _codeController.removeListener(_onTextChanged);
-      _codeController.dispose();
-    }
+    _textController.removeListener(_onTextChanged);
+    _textController.dispose();
     super.dispose();
   }
 
   void _onTextChanged() {
-    final text = _useMacOSFallback
-        ? _textController.text
-        : _codeController.text;
+    if (_isUpdatingProgrammatically) return;
+    
+    final text = _textController.text;
     widget.onChanged(text);
     _validateJson(text);
   }
@@ -131,11 +106,7 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
 
   void _formatJson() {
     if (_formattedJson != null) {
-      if (_useMacOSFallback) {
-        _textController.text = _formattedJson!;
-      } else {
-        _codeController.text = _formattedJson!;
-      }
+      _textController.text = _formattedJson!;
     }
   }
 
@@ -177,10 +148,7 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
                               ),
                             ),
                           ),
-                        if (_isValid && 
-                            (_useMacOSFallback
-                                ? _textController.text.trim().isNotEmpty
-                                : _codeController.text.trim().isNotEmpty))
+                        if (_isValid && _textController.text.trim().isNotEmpty)
                           Flexible(
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -245,10 +213,7 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
                         ),
                       ),
                     ),
-                  if (_isValid && 
-                      (_useMacOSFallback
-                          ? _textController.text.trim().isNotEmpty
-                          : _codeController.text.trim().isNotEmpty))
+                  if (_isValid && _textController.text.trim().isNotEmpty)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -287,43 +252,28 @@ abstract class JsonEditorBaseState<T extends JsonEditorBase> extends State<T> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: _useMacOSFallback
-                ? Container(
-                    color: Colors.grey.shade50,
-                    child: TextField(
-                      controller: _textController,
-                      maxLines: null,
-                      expands: true,
-                      style: const TextStyle(
-                        fontFamily: 'Monaco',
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.all(12),
-                        hintText: 'Enter JSON here...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontFamily: 'Monaco',
-                        ),
-                      ),
-                    ),
-                  )
-                : CodeEditor(
-                    controller: _codeController,
-                    style: CodeEditorStyle(
-                      fontSize: 14,
-                      fontFamily: 'monospace',
-                      codeTheme: CodeHighlightTheme(
-                        languages: {
-                          'json': CodeHighlightThemeMode(mode: langJson),
-                        },
-                        theme: githubTheme,
-                      ),
-                    ),
-                    wordWrap: false,
+            child: Container(
+              color: Colors.grey.shade50,
+              child: TextField(
+                controller: _textController,
+                maxLines: null,
+                expands: true,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.all(12),
+                  hintText: 'Enter JSON here...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontFamily: 'monospace',
                   ),
+                ),
+              ),
+            ),
           ),
         ),
       ],

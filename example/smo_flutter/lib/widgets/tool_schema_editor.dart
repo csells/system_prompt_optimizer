@@ -76,8 +76,13 @@ class _ToolSchemaItem extends StatelessWidget {
   void _updateSchema(String value) {
     if (value.trim().isNotEmpty) {
       // Only update if we have valid JSON - validation is handled by JsonEditorField
-      final decoded = json.decode(value) as Map<String, dynamic>;
-      onUpdate(decoded);
+      try {
+        final decoded = json.decode(value) as Map<String, dynamic>;
+        onUpdate(decoded);
+      } catch (e) {
+        // Ignore JSON parsing errors - the JsonEditorField will show validation errors
+        // We only update the schema when the JSON is valid
+      }
     }
   }
 

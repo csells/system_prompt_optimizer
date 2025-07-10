@@ -43,9 +43,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   
-  # Real-time JSON editor with syntax highlighting
-  re_editor: ^0.7.0
-  re_highlight: ^0.0.3
   
   # Launch browser for API key link
   url_launcher: ^6.2.0
